@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+<title>Matamurcianos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.55.2/phaser.min.js"></script>
+</head>
+<body>
+<h1>Matamurcianos</h1>
+
+<script>
+
+//recordatori, la e es de enemies
+
+let game_w = 800;
+let game_h = 600;
+
+let config = {
+	width: game_w,
+	height: game_h,
+	scene: {
+		preload: preload,	
+		create: create,
+		update: update
+	},
+	physics: {
+		default:'arcade',
+		arcade: {
+			debug:true
+		}
+	}	
+}
+let game = new Phaser.Game(config);
+
+let spawn = 800;
+let offset_x = -128;
+
+let e1_speed = 3;
+let e2_speed = 2;
+let e3_speed = 4;
+let e4_speed = 1;
+
+let player_speed = 5;
+
+let lives_txt;
+let scores_txt;
+  
+let lives = 3;
+let scores = 0;
+
+let player_x = (game_w/4);
+let player_y = 40;
+
+let road1_y = 530;
+let road2_y = 380;
+let road3_y = 200;
+let road4_y = 310;
+
+let road_offset_y = 90;
+let crossing = false;
+
+function reset () {
+	crossing = false;
+	
+	player_img.x = player_x;
+	player_img.y = player_y;
+
+	e1_img.x = game_w-offset_x;
+
+	e2_img.x = game_w;
+
+	e3_img.x = game_w-offset_x;
+
+	e4_img.x = game_w;
+}
+
+function preload ()
+{
+	this.load.image('player','player.png');
+
+	//mapa
+	this.load.image('espacio','espacio.png');
+	//enemigos
+	this.load.image('e1','e1.png');
+	this.load.image('e2','e2.png');
+	this.load.image('e3','e3.png');
+	this.load.image('e4','e4.png');
+	this.load.image('e5','e5.png');
+}
+
+    function checke(e){
+
+    	if(e.x >800+20){
+    		e.x = offset_x;
+    	}    
+    	if(e.x < 0-20){
+    		e.x = 800;
+	}
+    }
+	
+function create(){
+	cursors = this.input.keyboard.createCursorKeys();
+	espacio_img = this.add.image(game_w/2, game_h/2, 'espacio');
+	player_img = this.add.image(game_w/4, 40, 'player');
+	this.physics.add.existing(player_img, false);
+	
+	espacio_img.setScale(3.15);
+
+	e1_img = this.add.image(offset_x, 530, 'e1');
+	e2_img = this.add.image(spawn, 380, 'e2');
+	e3_img = this.add.image(offset_x, 200, 'e3');
+	e4_img = this.add.image(spawn, 310, 'e4');
+	
+	this.physics.add.existing(e1_img, false);
+	this.physics.add.existing(e2_img, false);
+	this.physics.add.existing(e3_img, false);
+	this.physics.add.existing(e4_img, false);
+
+	e2_img.flipX = true;
+	e4_img.flipX = true;
+
+	let e = [e1_img, e2_img, e3_img, e4_img];
+
+	for (let i = 0; i < e.length; i++){
+		this.physics.add.collider(player_img, e[i], function (player, e){
+
+		lives--;
+		lives_txt.text = lives.toString();
+		reset();
+		});
+	}
+
+	this.add.text(game_w/2, 64, "VIDAS");
+	lives_txt = this.add.text(game_w/2+64, 64, "3");
+
+	this.add.text(game_w/2+128, 64, "PUNTOS");
+	scores_txt = this.add.text(game_w/2+196, 64, "0");
+
+//	e2_img.flipX = true;
+//	e4_img.flipX = true;
+}
+
+function update(){
+if (cursors.up.isDown){
+	player_img.y -= player_speed;
+}
+if (cursors.down.isDown){
+	player_img.y += player_speed;
+}
+
+if (player_img.y > game_h - road_offset_y)
+		crossing = true;
+	if (player_img.y <= road_offset_y && crossing){
+		crossing = false;
+		scores++;
+		scores_txt.text = scores.toString();
+
+		e1_img.x += e1_speed;
+		e2_img.x -= e2_speed;
+		e3_img.x += e3_speed;
+		e4_img.x -= e4_speed;
+
+		flipe(e1_img);
+		flipe(e2_img);
+		flipe(e3_img);
+		flipe(e4_img);
+	}
+}
+function flipe (e){
+	if (e.flipX && e.x < offset_x)
+		e.x = game_w - offset_x;
+	else if (!e.flipX && e.x > game_w - offset_x)
+		e.x = offset_x;	
+}
+</script>
+</body>
+</html>

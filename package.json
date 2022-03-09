@@ -1,0 +1,19 @@
+{
+  "name": "matamarcianos",
+  "version": "1.0.0",
+  "description": "Práctica final de 2122_M04UF3",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tara7ara/Matamarcianos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tara7ara/Matamarcianos/issues"
+  },
+  "homepage": "https://github.com/Tara7ara/Matamarcianos#readme"
+}
