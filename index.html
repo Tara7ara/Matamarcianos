@@ -9,6 +9,7 @@
 
 <h3>MARTI MIRA LAS S, QUE SIEMPRE TE LAS COMES</h3>
 <p>Haz caso al Marti del pasado</p>
+<p>Hijoputa, mira bien lo que escribes</p>
 
 <script>
 
@@ -34,7 +35,7 @@ let config = {
 let game = new Phaser.Game(config);
 
 // dels enemics
-let spawn = 800;
+let spawn = 850;
 let offset_x = -128;
 let e1_img, e2_img, e3_img, e4_img;
 let e;
@@ -63,7 +64,6 @@ let road3_y = 200;
 let road4_y = 310;
 
 let road_offset_y = 90;
-let crossing = false;
 
 let bullet, bullet1, bullet2;
 let bullets;
@@ -73,8 +73,6 @@ let Shooted = false;
 let Shoot = 0;
 
 function reset () {
-	crossing = false;
-	
 	player_img.x = player_x;
 	player_img.y = player_y;
 
@@ -195,23 +193,20 @@ for(let i = 0; i < bullets.length; i++) {
 			console.log("shutinc");
 		}
 
-if (player_img.y > game_h - road_offset_y)
-	crossing = true;
-if (player_img.y <= road_offset_y && crossing){
-	crossing = false;
-	scores++;
-	scores_txt.text = scores.toString();
-}
-
 	e1_img.x -= e1_speed;
 	e2_img.x -= e2_speed;
 	e3_img.x -= e3_speed;
 	e4_img.x -= e4_speed;	
 
+//respawn de los enemigos (no tiene sentido, siempre es positivo)
 for (let i = 0; i < e.length; i++){
-
-}
-
+		if (e[i].x > spawn){
+			e1_img.x = spawn;
+			e2_img.x = spawn;
+			e3_img.x = spawn;
+			e4_img.x = spawn;
+		 }
+	}
 }
 
 </script>
