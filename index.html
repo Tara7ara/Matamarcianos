@@ -115,8 +115,11 @@ function create(){
 	this.physics.add.existing(e3_img, false);
 	this.physics.add.existing(e4_img, false);
 
-	e2_img.flipX = true;
-	e4_img.flipX = true;
+//	e2_img.flipX = true;
+//	e4_img.flipX = true;
+//	e3_img.flipX = true;
+//	e1_img.flipX = true;
+//	player.flipX = true;
 
 	let e = [e1_img, e2_img, e3_img, e4_img];
 
@@ -159,10 +162,10 @@ if (player_img.y > game_h - road_offset_y)
 		e3_img.x += e3_speed;
 		e4_img.x -= e4_speed;
 
-		flipe(e1_img);
-		flipe(e2_img);
-		flipe(e3_img);
-		flipe(e4_img);
+//		flipe(e1_img);
+//		flipe(e2_img);
+//		flipe(e3_img);
+//		flipe(e4_img);
 	}
 }
 function flipe (e){
