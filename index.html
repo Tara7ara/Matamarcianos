@@ -7,10 +7,12 @@
 <body>
 <h1>Matamurcianos</h1>
 
+<h3>MARTI MIRA LAS S, QUE SIEMPRE TE LAS COMES</h3>
+<p>Haz caso al Marti del pasado</p>
+
 <script>
 
 //recordatori, la e es de enemies
-
 let game_w = 800;
 let game_h = 600;
 
@@ -31,24 +33,29 @@ let config = {
 }
 let game = new Phaser.Game(config);
 
+// dels enemics
 let spawn = 800;
 let offset_x = -128;
+let e1_img, e2_img, e3_img, e4_img;
+let e;
 
+//velocitat dels enemics
 let e1_speed = 3;
 let e2_speed = 2;
 let e3_speed = 4;
 let e4_speed = 1;
 
+//velocitat del player
 let player_speed = 5;
 
+//Puntuació
 let lives_txt;
 let scores_txt;
-  
 let lives = 3;
 let scores = 0;
 
-let player_x = (game_w/4);
-let player_y = 40;
+let player_x = (game_w/10);
+let player_y = 60;
 
 let road1_y = 530;
 let road2_y = 380;
@@ -58,19 +65,23 @@ let road4_y = 310;
 let road_offset_y = 90;
 let crossing = false;
 
+let bullet, bullet1, bullet2;
+let bullets;
+let bullet_speed = 7;
+
+let Shooted = false;
+let Shoot = 0;
+
 function reset () {
 	crossing = false;
 	
 	player_img.x = player_x;
 	player_img.y = player_y;
 
-	e1_img.x = game_w-offset_x;
-
-	e2_img.x = game_w;
-
-	e3_img.x = game_w-offset_x;
-
-	e4_img.x = game_w;
+	e1_img.x = spawn;
+	e2_img.x = spawn;
+	e3_img.x = spawn;
+	e4_img.x = spawn;
 }
 
 function preload ()
@@ -84,7 +95,8 @@ function preload ()
 	this.load.image('e2','e2.png');
 	this.load.image('e3','e3.png');
 	this.load.image('e4','e4.png');
-	this.load.image('e5','e5.png');
+	//balas
+	this.load.image('bullet','bullet.png');
 }
 
     function checke(e){
@@ -100,30 +112,42 @@ function preload ()
 function create(){
 	cursors = this.input.keyboard.createCursorKeys();
 	espacio_img = this.add.image(game_w/2, game_h/2, 'espacio');
-	player_img = this.add.image(game_w/4, 40, 'player');
+	player_img = this.add.image(game_w/10, 60, 'player');
 	this.physics.add.existing(player_img, false);
 	
 	espacio_img.setScale(3.15);
 
-	e1_img = this.add.image(offset_x, 530, 'e1');
+	//cargar el enemigo
+	e1_img = this.add.image(spawn, 530, 'e1');
 	e2_img = this.add.image(spawn, 380, 'e2');
-	e3_img = this.add.image(offset_x, 200, 'e3');
-	e4_img = this.add.image(spawn, 310, 'e4');
+	e3_img = this.add.image(spawn, 100, 'e3');
+	e4_img = this.add.image(spawn, 250, 'e4');
+
+	//cargar las balas
+	bullet1_img = this.add.image(100, 1000, 'bullet');
+	bullet2_img = this.add.image(100, 1000, 'bullet');
+	bullet3_img = this.add.image(100, 1000, 'bullet');
 	
 	this.physics.add.existing(e1_img, false);
 	this.physics.add.existing(e2_img, false);
 	this.physics.add.existing(e3_img, false);
 	this.physics.add.existing(e4_img, false);
 
-//	e2_img.flipX = true;
-//	e4_img.flipX = true;
-//	e3_img.flipX = true;
-//	e1_img.flipX = true;
-//	player.flipX = true;
+	this.physics.add.existing(bullet1_img, false);
+	this.physics.add.existing(bullet2_img, false);
+	this.physics.add.existing(bullet3_img, false);
+	
+	e = [e1_img, e2_img, e3_img, e4_img];
 
-	let e = [e1_img, e2_img, e3_img, e4_img];
+	bullets = [bullet1_img, bullet2_img, bullet3_img];
 
-	for (let i = 0; i < e.length; i++){
+	for (let i = 0; i < bullets.length; i++) {
+				bullets[i].setScale(0.5);
+				bullets[i].texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
+				bullets[i].setActive(false).setVisible(false);
+			}
+
+for (let i = 0; i < e.length; i++){
 		this.physics.add.collider(player_img, e[i], function (player, e){
 
 		lives--;
@@ -138,42 +162,58 @@ function create(){
 	this.add.text(game_w/2+128, 64, "PUNTOS");
 	scores_txt = this.add.text(game_w/2+196, 64, "0");
 
-//	e2_img.flipX = true;
-//	e4_img.flipX = true;
 }
 
 function update(){
-if (cursors.up.isDown){
-	player_img.y -= player_speed;
-}
-if (cursors.down.isDown){
-	player_img.y += player_speed;
-}
+	if (cursors.up.isDown){
+		player_img.y -= player_speed;
+	}
+	if (cursors.down.isDown){
+		player_img.y += player_speed;
+	}
+
+cursors.space.on('down', function(event){
+	if(!Shooted){ shoot(); }
+		Shooted = true;
+	});
+cursors.space.on('up', function(event){
+	Shooted = false;
+});
+
+for(let i = 0; i < bullets.length; i++) {
+		bullets[i].x += bullet_speed;
+				if(bullets[i].x > game_w){
+					 bullets[i].setActive(false).setVisible(false);
+				}
+			}
+		function shoot(){ 
+			bullets[Shoot].x = player_img.x+50;
+			bullets[Shoot].y = player_img.y;
+
+			bullets[Shoot].setActive(true).setVisible(true);
+			Shoot++; if(Shoot == 3){Shoot = 0;}
+			console.log("shutinc");
+		}
 
 if (player_img.y > game_h - road_offset_y)
-		crossing = true;
-	if (player_img.y <= road_offset_y && crossing){
-		crossing = false;
-		scores++;
-		scores_txt.text = scores.toString();
-
-		e1_img.x += e1_speed;
-		e2_img.x -= e2_speed;
-		e3_img.x += e3_speed;
-		e4_img.x -= e4_speed;
-
-//		flipe(e1_img);
-//		flipe(e2_img);
-//		flipe(e3_img);
-//		flipe(e4_img);
-	}
+	crossing = true;
+if (player_img.y <= road_offset_y && crossing){
+	crossing = false;
+	scores++;
+	scores_txt.text = scores.toString();
 }
-function flipe (e){
-	if (e.flipX && e.x < offset_x)
-		e.x = game_w - offset_x;
-	else if (!e.flipX && e.x > game_w - offset_x)
-		e.x = offset_x;	
+
+	e1_img.x -= e1_speed;
+	e2_img.x -= e2_speed;
+	e3_img.x -= e3_speed;
+	e4_img.x -= e4_speed;	
+
+for (let i = 0; i < e.length; i++){
+
 }
+
+}
+
 </script>
 </body>
 </html>
