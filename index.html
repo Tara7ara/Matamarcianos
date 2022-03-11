@@ -41,9 +41,9 @@ let e1_img, e2_img, e3_img, e4_img;
 let e;
 
 //velocitat dels enemics
-let e1_speed = 3;
+let e1_speed = 3.2;
 let e2_speed = 2;
-let e3_speed = 4;
+let e3_speed = 3;
 let e4_speed = 1;
 
 //velocitat del player
@@ -154,11 +154,22 @@ for (let i = 0; i < e.length; i++){
 		});
 	}
 
-	this.add.text(game_w/2, 64, "VIDAS");
-	lives_txt = this.add.text(game_w/2+64, 64, "3");
+// Intent de fer colisions amb la bala
+//	for (let i = 0; i < bullets.length; i++){
+//		this.physics.add.collider(bullets[i], e[i], function (bullets, e){
+//			if(e[i].x < 0){e[i].x = spawn;}
+//
+//			score++;
+//			score_txt.text = lives.toString();
+//		});
+//	}
 
-	this.add.text(game_w/2+128, 64, "PUNTOS");
-	scores_txt = this.add.text(game_w/2+196, 64, "0");
+//La puntuació
+	this.add.text(game_w/10, 30, "VIDAS");
+	lives_txt = this.add.text(game_w/10+64, 30, "3");
+
+	this.add.text(game_w/10+128, 30, "PUNTOS");
+	scores_txt = this.add.text(game_w/10+196, 30, "0");
 
 }
 
@@ -198,14 +209,11 @@ for(let i = 0; i < bullets.length; i++) {
 	e3_img.x -= e3_speed;
 	e4_img.x -= e4_speed;	
 
-//respawn de los enemigos (no tiene sentido, siempre es positivo)
-for (let i = 0; i < e.length; i++){
-		if (e[i].x > spawn){
-			e1_img.x = spawn;
-			e2_img.x = spawn;
-			e3_img.x = spawn;
-			e4_img.x = spawn;
-		 }
+//respawn de los enemigos
+for (let i = 0;i < e.length; i++){
+		if(e[i].x < 0){e[i].x = spawn;
+		lives--;
+		lives_txt.text = lives.toString();}
 	}
 }
 
